@@ -48,5 +48,3 @@ networks:
   npm-network:
     name: npm-network
     external: true
-
-#docker-compose up -d --build; docker-compose logs -ft --tail=35      
