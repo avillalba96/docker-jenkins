@@ -1,0 +1,34 @@
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de logs
+*.log
+*.pid
+
+# Directorios de Jenkins que pueden generar archivos temporales o configuraciones locales
+jenkins-agent/
+jenkins/
+
+# Archivos generados por Docker Compose o contenedores
+docker-compose.override.yml
+.env
+
+# Archivos de sistema operativo o IDEs
+.vscode/
+.idea/
+*.swp
+
+# Archivos de compilación o binarios
+*.o
+*.so
+*.dll
+*.exe
+
+# Ignorar los archivos binarios o temporales que pueda generar Docker
+docker-compose.override.yml
+
+# Ignorar claves o configuraciones privadas
+*.pem
+*.key
+

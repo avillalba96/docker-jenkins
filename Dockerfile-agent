@@ -1,0 +1,30 @@
+FROM jenkins/inbound-agent:latest-jdk21
+
+# Install Docker and Docker Compose from Debian repositories
+USER root
+RUN apt-get update && \
+    apt-get install -y \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg2 \
+    software-properties-common \
+    docker.io \
+    docker-compose \
+    python3 \
+    python3-pip && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Configure Docker to run as non-root user
+RUN getent group docker || groupadd docker
+RUN usermod -aG docker jenkins
+
+# Enable DinD (Docker in Docker)
+RUN mkdir -p /var/lib/docker
+VOLUME /var/lib/docker
+
+# Set entrypoint for Jenkins agent
+USER jenkins
+ENTRYPOINT ["/usr/local/bin/jenkins-agent"]
+

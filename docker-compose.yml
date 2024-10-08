@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  jenkins:
+    build:
+      context: .
+      dockerfile: Dockerfile-master
+    restart: unless-stopped
+    hostname: jenkins
+    container_name: jenkins
+    privileged: true
+    user: root
+    ports:
+      - "8090:8080"
+      - "50000:50000"
+    environment:
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+    volumes:
+      - ./jenkins:/var/jenkins_home
+      - ./jenkins/aws:/root/.aws
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - npm-network
+
+  jenkins-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile-agent      
+    restart: unless-stopped
+    hostname: jenkins-agent
+    container_name: jenkins-agent
+    user: root
+    depends_on:
+      - jenkins
+    environment:
+      - JENKINS_URL=http://jenkins:8080
+      - JENKINS_AGENT_NAME=${JENKINS_AGENT_NAME}
+      - JENKINS_SECRET=${JENKINS_SECRET}        
+      - JENKINS_AGENT_WORKDIR=/home/jenkins/agent
+      - JENKINS_WEB_SOCKET=true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./jenkins-agent:/home/jenkins/agent
+    networks:
+      - npm-network
+
+networks:
+  npm-network:
+    name: npm-network
+    external: true
+
+#docker-compose up -d --build; docker-compose logs -ft --tail=35      
