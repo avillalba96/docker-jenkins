@@ -12,7 +12,7 @@ Ambos servicios están configurados para utilizar Docker-in-Docker (DinD), lo qu
 ### Servicios
 
 1. **Jenkins Master** (`jenkins`):
-   - Se ejecuta en el puerto `8090` para la interfaz web de Jenkins y el puerto `50000` para la comunicación entre agentes.
+   - Se ejecuta en el puerto `8080` para la interfaz web de Jenkins y el puerto `50000` para la comunicación entre agentes.
    - Almacena los datos persistentes de Jenkins en la carpeta `./jenkins`.
    - Se configura para ejecutar sin el asistente de configuración inicial.
    - Volúmenes montados:
@@ -42,8 +42,11 @@ docker network create npm-network
 Algunas variables de entorno están definidas en el archivo `.env`:
 
 ```env
-JENKINS_AGENT_NAME=jenkins-agent-xxxxxx
-JENKINS_SECRET=xxxxxxxxxxxxxxxxxxxxxx
+JENKINS_MASTER_HOST=jenkins-master
+JENKINS_MASTER_PORT=8080
+
+JENKINS_AGENT_NAME=jenkins-agent-XXXX
+JENKINS_SECRET=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 ```
 
 ## Configuración y Ejecución
@@ -64,23 +67,21 @@ Crea un archivo `.env` con las variables necesarias para tu entorno, como se des
 Para construir las imágenes de Jenkins Master y Jenkins Agent, y ejecutarlos en segundo plano, usa el siguiente comando:
 
 ```bash
-docker-compose up -d --build
+docker-compose up -d --build; docker-compose logs -ft --tail=35
 ```
 
-### 4. Ver los logs
-
-Para monitorear los logs en tiempo real y ver el estado de ambos servicios:
-
-```bash
-docker-compose logs -ft --tail=35
-```
-
-### 5. Acceder a Jenkins
+### 4. Acceder a Jenkins
 
 Una vez que Jenkins esté en ejecución, puedes acceder a la interfaz web de Jenkins navegando a:
 
 ```bash
-http://localhost:8090
+http://localhost:8080
+```
+
+### 5. Ejecutar unicamente el jenkins-agent
+
+```bash
+docker-compose -f docker-compose_agent.yml up -d --build; docker-compose -f docker-compose_agent.yml logs -ft --tail=35
 ```
 
 ## Notas
@@ -99,5 +100,4 @@ Si experimentas problemas durante la ejecución de Jenkins o los agentes, asegú
 
 1. Docker esté instalado y ejecutándose correctamente en tu máquina.
 2. La red externa `npm-network` esté disponible.
-3. No haya conflictos de puertos con otros servicios que usen el puerto `8090` o `50000`.
-
+3. No haya conflictos de puertos con otros servicios que usen el puerto `8080` o `50000`.

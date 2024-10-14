@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  jenkins-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile-agent      
+    restart: unless-stopped
+    hostname: jenkins-agent
+    container_name: jenkins-agent
+    user: root
+    environment:
+      - JENKINS_URL=http://${JENKINS_MASTER_HOST}:${JENKINS_MASTER_PORT}
+      - JENKINS_AGENT_NAME=${JENKINS_AGENT_NAME}
+      - JENKINS_SECRET=${JENKINS_SECRET}        
+      - JENKINS_AGENT_WORKDIR=/home/jenkins/agent
+      - JENKINS_WEB_SOCKET=true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./jenkins-agent:/home/jenkins/agent

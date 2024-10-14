@@ -1,17 +1,17 @@
 version: '3.8'
 
 services:
-  jenkins:
+  jenkins-master:
     build:
       context: .
       dockerfile: Dockerfile-master
     restart: unless-stopped
-    hostname: jenkins
-    container_name: jenkins
+    hostname: jenkins-master
+    container_name: jenkins-master
     privileged: true
     user: root
     ports:
-      - "8090:8080"
+      - "8080:8080"
       - "50000:50000"
     environment:
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
@@ -21,6 +21,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - npm-network
+      - default
 
   jenkins-agent:
     build:
@@ -31,9 +32,9 @@ services:
     container_name: jenkins-agent
     user: root
     depends_on:
-      - jenkins
+      - jenkins-master
     environment:
-      - JENKINS_URL=http://jenkins:8080
+      - JENKINS_URL=http://${JENKINS_MASTER_HOST}:${JENKINS_MASTER_PORT}
       - JENKINS_AGENT_NAME=${JENKINS_AGENT_NAME}
       - JENKINS_SECRET=${JENKINS_SECRET}        
       - JENKINS_AGENT_WORKDIR=/home/jenkins/agent
