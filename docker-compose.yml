@@ -14,7 +14,7 @@ services:
       - "8080:8080"
       - "50000:50000"
     environment:
-      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=true
     volumes:
       - ./jenkins:/var/jenkins_home
       - ./jenkins/aws:/root/.aws
