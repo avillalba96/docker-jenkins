@@ -67,3 +67,4 @@ workflow-step-api
 workflow-support
 ws-cleanup
 kubernetes
+kubernetes-cli
